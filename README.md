@@ -145,7 +145,8 @@ When moving from local demo to a production environment:
 - Enable `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS`, and related headers
   in `settings.py` (already scaffolded, commented)
 - Switch to a managed database (PostgreSQL / MySQL) and set `DEBUG=False`
-- Rotate `SECRET_KEY`, DB credentials, and Oblio API secrets
+- Generate a fresh `SECRET_KEY` and provide real DB / Oblio credentials
+  via environment variables (see `.env.example`)
 - Add column-level encryption for personal data (CNP, CI) —
   planned via `django-cryptography`
 - Automate DB backups and configure log aggregation
