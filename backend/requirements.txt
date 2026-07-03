@@ -1,0 +1,21 @@
+# Django + REST Framework
+Django>=5.1,<5.2
+djangorestframework>=3.15
+djangorestframework-simplejwt>=5.3
+django-cors-headers>=4.4
+django-filter>=24.3
+
+# Database drivers (SQLite included in Python; only install mysqlclient if using MySQL)
+# mysqlclient>=2.2
+
+# Auth
+bcrypt>=4.2
+
+# HTTP (for Oblio integration; can be omitted for portfolio demo)
+requests>=2.32
+
+# Environment variables
+python-dotenv>=1.0
+
+# Fake data generation (for seed_demo command)
+Faker>=30.0
