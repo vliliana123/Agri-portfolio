@@ -126,17 +126,29 @@ Agri/
 
 Security posture reflects an OWASP Top 10 audit:
 
-- ✅ JWT in httpOnly + SameSite cookies (not `localStorage`)
-- ✅ CORS allow-list, no `AllowAllOrigins`
-- ✅ `IsAuthenticated` as default DRF permission
-- ✅ Rate limiting on `/api/login/` (5/min per IP)
-- ✅ Security headers (`X-Content-Type-Options`, `X-Frame-Options: DENY`,
+- JWT in httpOnly + SameSite cookies (not `localStorage`)
+- CORS allow-list, no `AllowAllOrigins`
+- `IsAuthenticated` as default DRF permission
+- Rate limiting on `/api/login/` (5/min per IP)
+- Security headers (`X-Content-Type-Options`, `X-Frame-Options: DENY`,
   `Referrer-Policy`)
-- ✅ Explicit serializer `fields` — no `__all__`
-- ✅ ORM everywhere (no raw SQL string concat)
-- ✅ Bcrypt-hashed passwords
-- ⚠️ HTTPS + `Secure` cookies to be enabled at deployment time
-- ⚠️ Column-level encryption for PII deferred (see roadmap)
+- Explicit serializer `fields` — no `__all__`
+- ORM everywhere (no raw SQL string concat)
+- Bcrypt-hashed passwords
+
+## 🚀 Deployment considerations
+
+When moving from local demo to a production environment:
+
+- Serve over HTTPS and flip cookies to `secure=True`
+  (see `set_auth_cookies` in `backend/api/views.py`)
+- Enable `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS`, and related headers
+  in `settings.py` (already scaffolded, commented)
+- Switch to a managed database (PostgreSQL / MySQL) and set `DEBUG=False`
+- Rotate `SECRET_KEY`, DB credentials, and Oblio API secrets
+- Add column-level encryption for personal data (CNP, CI) —
+  planned via `django-cryptography`
+- Automate DB backups and configure log aggregation
 
 ---
 
