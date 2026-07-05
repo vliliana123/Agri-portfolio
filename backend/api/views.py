@@ -499,12 +499,10 @@ class PlatiArendaViewSet(viewsets.ModelViewSet):
             return Response({"error": "Arenda nu există"}, status=status.HTTP_404_NOT_FOUND)
 
         contract = arenda.contract
-        suprafata_totala = Terenuri.objects.filter(
-            contract_id=contract.id_contract
-        ).aggregate(Sum('suprafata'))['suprafata__sum'] or 0
+        # Sumă în Python (suprafata e text) — vezi Terenuri.suprafata_totala_contract
+        suprafata_totala = Terenuri.suprafata_totala_contract(contract.id_contract)
 
         try:
-            suprafata_totala = Decimal(str(suprafata_totala))
             cantitate = Decimal(str(cantitate))
             nivel_lei = Decimal(str(arenda.nivel_lei))
         except Exception:

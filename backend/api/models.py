@@ -154,7 +154,25 @@ class Terenuri(models.Model):
 
     def __str__(self):
         return f"Teren {self.id_teren} - Tarla {self.tarla}"
-    
+
+    @classmethod
+    def suprafata_totala_contract(cls, contract_id):
+        """Suma suprafețelor unui contract.
+
+        `suprafata` e stocată ca text (VARCHAR), deci NU putem folosi
+        SUM() în SQL — pe PostgreSQL `SUM(varchar)` dă eroare. Sumăm în
+        Python și tolerăm atât punct cât și virgulă zecimală.
+        """
+        from decimal import Decimal, InvalidOperation
+        total = Decimal('0')
+        valori = cls.objects.filter(contract_id=contract_id).values_list('suprafata', flat=True)
+        for val in valori:
+            try:
+                total += Decimal(str(val).replace(',', '.'))
+            except (InvalidOperation, AttributeError, TypeError):
+                continue  # valoare neconvertibilă → ignorată
+        return total
+
 class Arenda(models.Model):
     """Model pentru arenda anuală"""
     id_arenda = models.AutoField(primary_key=True)
@@ -197,13 +215,10 @@ class Arenda(models.Model):
         from django.db.models import Sum
         from decimal import Decimal
         
-        # Calculează suprafață totală din contract
-        suprafata_totala = Terenuri.objects.filter(
-            contract_id=self.contract.id_contract
-        ).aggregate(Sum('suprafata'))['suprafata__sum'] or 0
-        
+        # Calculează suprafață totală din contract (sumă în Python — vezi helper)
+        suprafata_totala = Terenuri.suprafata_totala_contract(self.contract.id_contract)
+
         try:
-            suprafata_totala = Decimal(str(suprafata_totala))
             nivel_lei_decimal = Decimal(str(self.nivel_lei or 0))
         except Exception:
             return  # Nu actualiza dacă nu se poate converti
