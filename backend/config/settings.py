@@ -20,6 +20,10 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Directorul cu build-ul React (frontend/build). Populat la deploy (Docker/CI).
+# În dev local nu există — folosim `npm start` separat pe :3000.
+FRONTEND_BUILD_DIR = BASE_DIR.parent / 'frontend' / 'build'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -31,6 +35,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-key-change-me')
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# Render injectează automat hostname-ul public (ex: agri-portfolio.onrender.com)
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS = [f'https://{RENDER_EXTERNAL_HOSTNAME}']
 
 
 # Application definition
@@ -51,6 +61,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,7 +76,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [FRONTEND_BUILD_DIR],  # ca Django să găsească index.html (build React)
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,16 +95,30 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': os.environ.get('DB_NAME', BASE_DIR / 'db.sqlite3'),
-        'USER': os.environ.get('DB_USER', ''),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', ''),
-        'PORT': os.environ.get('DB_PORT', ''),
+# În producție (Render / Neon) baza de date vine printr-un singur DATABASE_URL.
+# Local, dacă DATABASE_URL nu e setat, cădem pe SQLite (zero config).
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,   # Neon / Render Postgres cer conexiune SSL
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3'),
+            'NAME': os.environ.get('DB_NAME', BASE_DIR / 'db.sqlite3'),
+            'USER': os.environ.get('DB_USER', ''),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', ''),
+            'PORT': os.environ.get('DB_PORT', ''),
+        }
+    }
 
 
 # Password validation
@@ -130,7 +155,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # populat de `collectstatic` (DRF etc.)
+
+# WhiteNoise servește build-ul React (index.html, favicon, /static/js, /static/css)
+# de pe ACELAȘI domeniu ca API-ul → cookies httpOnly SameSite=Lax funcționează.
+if FRONTEND_BUILD_DIR.exists():
+    WHITENOISE_ROOT = FRONTEND_BUILD_DIR
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -227,24 +258,22 @@ SECURE_REFERRER_POLICY = 'same-origin'
 # Când utilizatorul navighează de pe o pagină a ta către un site extern,
 # nu se trimite informație despre URL-ul intern în header-ul Referer
 
+# Cookie-urile de auth (views.py) devin `secure` (doar HTTPS) automat în producție.
+AUTH_COOKIE_SECURE = not DEBUG
+
 # ============================================================
-# DOAR pentru producție cu HTTPS — activează când deploy-ezi:
+# Producție (DEBUG=False) — HTTPS obligatoriu. Se activează automat.
 # ============================================================
-
-# SECURE_SSL_REDIRECT = True
-# Redirecționează automat orice cerere HTTP la HTTPS
-
-# SECURE_HSTS_SECONDS = 31536000  # 1 an
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
-# Forțează browser-ul să folosească HTTPS pentru viitoarele vizite (1 an minim)
-# ATENȚIE: irreversible — nu activa în dev local sau pe HTTP
-
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-# Cookies trimise doar pe HTTPS
-
-# Plus, modifică în set_auth_cookies (views.py) `secure=False` → `secure=True`
+if not DEBUG:
+    # Render/Neon termină TLS la proxy — îi spunem lui Django că cererea e HTTPS,
+    # altfel SECURE_SSL_REDIRECT intră în buclă de redirect.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True         # orice HTTP → HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000     # 1 an
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 # Oblio API Configuration
 OBLIO_CLIENT_ID = os.environ.get('OBLIO_CLIENT_ID', '')
 OBLIO_CLIENT_SECRET = os.environ.get('OBLIO_CLIENT_SECRET', '')

@@ -1,0 +1,35 @@
+# =============================================================================
+# Render Blueprint — deploy „one-click" din GitHub.
+# În Render: New → Blueprint → alegi repo-ul vliliana123/Agri-portfolio.
+# Render citește acest fișier și creează automat serviciul + baza de date.
+# Fiecare `git push` pe branch-ul principal declanșează un redeploy automat.
+# =============================================================================
+
+databases:
+  # Postgres gratuit gestionat de Render.
+  # ATENȚIE: pe planul free baza expiră după o perioadă (vezi README →
+  # secțiunea Deploy pentru cum treci pe Neon, Postgres gratuit fără expirare).
+  - name: agri-db
+    plan: free
+    databaseName: agri_db
+    user: agri
+
+services:
+  - type: web
+    name: agri-portfolio
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true            # redeploy automat la push pe GitHub
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true     # Render generează o cheie sigură, unică
+      - key: DEBUG
+        value: "False"
+      - key: SEED_DEMO
+        value: "true"           # populează datele demo la primul deploy;
+                                # SCHIMBĂ în "false" după ce s-a populat o dată!
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agri-db
+          property: connectionString

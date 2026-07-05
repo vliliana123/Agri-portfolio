@@ -7,6 +7,13 @@ django-filter>=24.3
 
 # Database drivers (SQLite included in Python; only install mysqlclient if using MySQL)
 # mysqlclient>=2.2
+# PostgreSQL driver — folosit în producție (Render / Neon) prin DATABASE_URL
+psycopg2-binary>=2.9
+dj-database-url>=2.2
+
+# Production server + servire fișiere statice (build React) de pe același domeniu
+gunicorn>=23.0
+whitenoise>=6.7
 
 # Auth
 bcrypt>=4.2

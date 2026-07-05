@@ -136,20 +136,45 @@ Security posture reflects an OWASP Top 10 audit:
 - ORM everywhere (no raw SQL string concat)
 - Bcrypt-hashed passwords
 
-## 🚀 Deployment considerations
+## 🚀 Deploy live (Render + GitHub)
 
-When moving from local demo to a production environment:
+The repo is deploy-ready. A single Docker image builds the React app and serves
+it from Django on **one domain**, so the httpOnly auth cookies keep working with
+no cross-origin tweaks. Every push to the main branch auto-redeploys.
 
-- Serve over HTTPS and flip cookies to `secure=True`
-  (see `set_auth_cookies` in `backend/api/views.py`)
-- Enable `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS`, and related headers
-  in `settings.py` (already scaffolded, commented)
-- Switch to a managed database (PostgreSQL / MySQL) and set `DEBUG=False`
-- Generate a fresh `SECRET_KEY` and provide real DB / Oblio credentials
-  via environment variables (see `.env.example`)
-- Add column-level encryption for personal data (CNP, CI) —
-  planned via `django-cryptography`
-- Automate DB backups and configure log aggregation
+**What's in the repo for this:** [`Dockerfile`](Dockerfile) (2-stage build),
+[`render.yaml`](render.yaml) (Render Blueprint), plus production settings
+(HTTPS redirect, `secure` cookies, `DATABASE_URL`, WhiteNoise) that switch on
+automatically when `DEBUG=False`.
+
+### Steps
+
+1. Push this branch to GitHub (`git push`).
+2. Create a free account at **[render.com](https://render.com)** and connect your
+   GitHub account.
+3. In Render: **New → Blueprint** → pick the `vliliana123/Agri-portfolio` repo.
+   Render reads [`render.yaml`](render.yaml) and provisions **the web service +
+   a free PostgreSQL database** automatically, wiring `DATABASE_URL`, generating
+   a `SECRET_KEY`, and setting `DEBUG=False`.
+4. Click **Apply**. First build takes a few minutes (installs deps, builds React,
+   runs migrations, and — because `SEED_DEMO=true` — loads the demo data).
+5. Open the URL Render gives you (e.g. `https://agri-portfolio.onrender.com`) and
+   log in with `demo@agri.local` / `demo1234`.
+6. **Important:** after the first successful deploy, set the `SEED_DEMO`
+   env var to `false` in the Render dashboard, so future redeploys don't wipe and
+   reseed the database.
+
+> **Free-tier notes:** the service sleeps after ~15 min idle (first request after
+> that takes ~30–60 s to wake). Render's free Postgres **expires after a limited
+> period** — when it does, create a free **[Neon](https://neon.tech)** Postgres
+> (no expiry), copy its connection string into the `DATABASE_URL` env var in
+> Render, and redeploy. Nothing in the code changes.
+
+### Still on the roadmap for a hardened production setup
+
+- Column-level encryption for personal data (CNP, CI) via `django-cryptography`
+- Automated DB backups and log aggregation
+- Real Oblio credentials via env vars (see [`.env.example`](backend/.env.example))
 
 ---
 

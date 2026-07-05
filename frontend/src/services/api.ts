@@ -9,8 +9,13 @@ import {Arendator,EmitOblioResponse,
   ConfigAnCreate,
   ConfigAnUpdate} from '../types';
 
-// Detectează dinamicu hostname-ul actual (localhost depe local, IP de pe rețea)
-const API_BASE_URL = `http://${window.location.hostname}:8000/api`;
+// În dev (localhost / IP de rețea) backend-ul rulează separat pe :8000.
+// În producție frontend-ul și API-ul sunt pe ACELAȘI domeniu → cale relativă `/api`.
+const hostname = window.location.hostname;
+const isLocalDev = hostname === 'localhost' || hostname === '127.0.0.1';
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL ||
+  (isLocalDev ? `http://${hostname}:8000/api` : '/api');
 
 export const api= axios.create({
     baseURL: API_BASE_URL,

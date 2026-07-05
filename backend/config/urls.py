@@ -15,10 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.conf import settings
+from django.urls import path, include, re_path
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('api/',include('api.urls')),
 ]
+
+# În producție, orice rută care NU e /api/ întoarce index.html — React Router
+# se ocupă apoi de navigare client-side. Activ doar dacă build-ul React există.
+if settings.FRONTEND_BUILD_DIR.exists():
+    urlpatterns.append(
+        re_path(r'^(?!api/).*$', TemplateView.as_view(template_name='index.html')),
+    )

@@ -27,7 +27,7 @@ def set_auth_cookies(response, access_token, refresh_token=None):
         key='access_token',
         value=access_token,
         httponly=True,
-        secure=False,                  # ← True când treci pe HTTPS în producție
+        secure=settings.AUTH_COOKIE_SECURE,   # True automat în producție (HTTPS)
         samesite='Lax',
         max_age=int(timedelta(hours=2).total_seconds()),
         path='/api/',                  # cookie trimis doar pe rute /api/
@@ -37,7 +37,7 @@ def set_auth_cookies(response, access_token, refresh_token=None):
             key='refresh_token',
             value=refresh_token,
             httponly=True,
-            secure=False,              # ← True în producție
+            secure=settings.AUTH_COOKIE_SECURE,   # True automat în producție (HTTPS)
             samesite='Lax',
             max_age=int(timedelta(days=30).total_seconds()),
             path='/api/token/refresh/',  # cookie trimis DOAR la refresh
