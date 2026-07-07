@@ -27,7 +27,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: SEED_DEMO
-        value: "true"           # populează datele demo la primul deploy;
+        value: "false"           # populează datele demo la primul deploy;
                                 # SCHIMBĂ în "false" după ce s-a populat o dată!
       - key: DATABASE_URL
         fromDatabase:

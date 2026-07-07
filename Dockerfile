@@ -8,10 +8,9 @@ FROM node:20-alpine AS frontend
 WORKDIR /app/frontend
 
 # Instalăm dependințele întâi (cache mai bun între build-uri).
-# `npm install` (nu `npm ci`) fiindcă reconciliază automat un package-lock
-# ușor desincronizat, în loc să pice ca `npm ci`.
+# `npm ci` = install curat, strict, reproductibil din package-lock.json.
 COPY frontend/package.json frontend/package-lock.json ./
-RUN npm install --no-audit --no-fund
+RUN npm ci --no-audit --no-fund
 
 # Copiem restul codului și construim (rezultă frontend/build).
 # CI=false → warning-urile ESLint NU opresc build-ul (react-scripts).
