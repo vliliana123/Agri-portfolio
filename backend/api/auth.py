@@ -24,13 +24,18 @@ class CustomJWTAuthentication(JWTAuthentication):
             if raw_token is None:
                 return None
 
-        # 3) Validează și returnează user
+        # 3) Validează și returnează user.
+        #    Orice problemă (token invalid/expirat, sau user inexistent — ex:
+        #    un cookie vechi rămas după un re-seed) → tratăm cererea ca
+        #    NEAUTENTICATĂ (return None), NU aruncăm excepție. Altfel un cookie
+        #    stale ar bloca inclusiv /api/login/ (AllowAny) și te-ar încuia afară.
         try:
             validated_token = self.get_validated_token(raw_token)
-        except InvalidToken:
+            user = self.get_user(validated_token)
+        except (InvalidToken, AuthenticationFailed):
             return None
 
-        return self.get_user(validated_token), validated_token
+        return user, validated_token
 
     def get_user(self, validated_token):
         """Override pentru a folosi modelul Users custom."""
