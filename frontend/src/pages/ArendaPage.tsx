@@ -25,8 +25,9 @@ import {
   createPlataArenda,
   getPlatiArenda,
   generareAn,
+  getConfigAnList,
 } from "../services/api";
-import { ContractDetails, Arenda } from "../types/index";
+import { ContractDetails, Arenda, ConfigAn } from "../types/index";
 import QRCodeSVG from "react-qr-code";
 
 export const ArendaPage = () => {
@@ -41,6 +42,7 @@ export const ArendaPage = () => {
   const [anSelectat, setAnSelectat] = React.useState<string>("2025");
   const [nivel_lei, setNivel_lei] = useState<number | string>("750");
   const [tipPlata, setTipPlata] = useState("porumb");
+  const [configuriAn, setConfiguriAn] = useState<ConfigAn[]>([]);
   const [cantitate, setCantitate] = useState<number | string>("");
 
   const [metodaPlata, setMetodaPlata] = useState("ridicare");
@@ -92,6 +94,20 @@ export const ArendaPage = () => {
     ) || 0;
   const nivelArenda = Number(contract?.nivel_arenda || 1);
   //const nivelArenda = 1000;
+
+  // Config de preț pentru anul selectat + prețul culturii alese (lei/kg).
+  const configAnCurent = configuriAn.find((c) => c.an === anSelectat) || null;
+  const pretKgCultura: number | null =
+    tipPlata === "grau"
+      ? (configAnCurent?.pret_kg_grau ?? null)
+      : tipPlata === "porumb"
+        ? (configAnCurent?.pret_kg_porumb ?? null)
+        : null;
+  // Cultură fără preț configurat pe anul ăsta (doar la arende noi) → avertisment.
+  const pretCulturaLipsa =
+    !arenda?.id_arenda &&
+    (tipPlata === "grau" || tipPlata === "porumb") &&
+    pretKgCultura == null;
   const cantitateImplicita = parseFloat(
     (suprafataTotala * nivelArenda).toFixed(2),
   );
@@ -156,7 +172,8 @@ export const ArendaPage = () => {
         if (arendaObj?.id_arenda) {
           setArenda(arendaObj);
           // Precompletează nivel_lei din arenda existentă
-          setNivel_lei(arendaObj.nivel_lei || "750");
+          //setNivel_lei(arendaObj.nivel_lei || "750");
+          setNivel_lei(arendaObj.nivel_lei)
           // Dacă există, încarcă plățile asociate
           const plati = await getPlatiArenda(arendaObj.id_arenda);
           console.log("getPlatiArenda response:", plati);
@@ -184,6 +201,25 @@ export const ArendaPage = () => {
 
     loadPlati();
   }, [id_contract, anSelectat]);
+
+  // Încarcă configurările de preț pe an (o singură dată)
+  useEffect(() => {
+    getConfigAnList()
+      .then((res) => setConfiguriAn(res.results || []))
+      .catch(() => setConfiguriAn([]));
+  }, []);
+
+  // Populează nivel_lei/ha din configul anului, după cultura selectată:
+  //   nivel lei/ha = preț_kg (lei/kg) × nivel_arenda (kg/ha din contract).
+  // - arendă deja salvată → păstrează nivelul ei (nu suprascrie);
+  // - plată în "lei" → nu ating câmpul (se completează manual);
+  // - an/cultură FĂRĂ preț configurat → golesc câmpul, ca să nu rămână o
+  //   valoare veche, înșelătoare, de la alt an.
+  useEffect(() => {
+    if (arenda?.id_arenda) return;
+    if (tipPlata !== "grau" && tipPlata !== "porumb") return;
+    setNivel_lei(pretKgCultura != null ? pretKgCultura * nivelArenda : "");
+  }, [tipPlata, arenda, nivelArenda, pretKgCultura]);
 
   const handleAnChange = (newAn: string) => {
     setAnSelectat(newAn);
@@ -474,6 +510,12 @@ export const ArendaPage = () => {
               onChange={(e) => setNivel_lei(Number(e.target.value))}
               fullWidth
               size="small"
+              helperText={
+                pretCulturaLipsa
+                  ? `Anul ${anSelectat} nu are preț ${tipPlata} configurat — completează manual sau setează prețul în „Prețuri pe an”.`
+                  : " "
+              }
+              error={pretCulturaLipsa}
             />
             <TextField
               type="date"
