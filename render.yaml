@@ -1,18 +1,10 @@
 # =============================================================================
 # Render Blueprint — deploy „one-click" din GitHub.
-# În Render: New → Blueprint → alegi repo-ul vliliana123/Agri-portfolio.
-# Render citește acest fișier și creează automat serviciul + baza de date.
-# Fiecare `git push` pe branch-ul principal declanșează un redeploy automat.
+#
+# Baza de date: PostgreSQL pe Neon (gratuit, fără expirare).
+# DATABASE_URL se setează MANUAL în dashboard-ul Render (Environment) cu șirul
+# de conexiune copiat din Neon — de aceea e `sync: false` mai jos.
 # =============================================================================
-
-databases:
-  # Postgres gratuit gestionat de Render.
-  # ATENȚIE: pe planul free baza expiră după o perioadă (vezi README →
-  # secțiunea Deploy pentru cum treci pe Neon, Postgres gratuit fără expirare).
-  - name: agri-db
-    plan: free
-    databaseName: agri_db
-    user: agri
 
 services:
   - type: web
@@ -27,9 +19,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: SEED_DEMO
-        value: "false"           # populează datele demo la primul deploy;
-                                # SCHIMBĂ în "false" după ce s-a populat o dată!
+        value: "false"          # pune "true" O DATĂ ca să populezi baza Neon nouă,
+                                # apoi revino la "false" (altfel reseedează la fiecare deploy)
       - key: DATABASE_URL
-        fromDatabase:
-          name: agri-db
-          property: connectionString
+        sync: false             # setat manual în dashboard = șirul de conexiune Neon
