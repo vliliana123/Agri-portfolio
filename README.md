@@ -34,7 +34,7 @@ tied to the local town-hall reference price (*preț kg primărie*).
 | --------- | ------------------------------------------------------- |
 | Backend   | Django 5.1, Django REST Framework, SimpleJWT, django-filter |
 | Frontend  | React 19, TypeScript, MUI, Axios, React Router          |
-| Database  | SQLite (demo) / MySQL (production)                      |
+| Database  | SQLite (local) / PostgreSQL — Neon (production)          |
 | Auth      | JWT (access + refresh), httpOnly cookies, bcrypt        |
 | Testing   | Manual + Django checks                                  |
 
@@ -142,6 +142,10 @@ The repo is deploy-ready. A single Docker image builds the React app and serves
 it from Django on **one domain**, so the httpOnly auth cookies keep working with
 no cross-origin tweaks. Every push to the main branch auto-redeploys.
 
+**Hosting:** the app runs on **Render** (web service, from the Docker image),
+and the database is a free **[Neon](https://neon.tech)** PostgreSQL (persistent,
+no expiry). They're connected by a single `DATABASE_URL`.
+
 **What's in the repo for this:** [`Dockerfile`](Dockerfile) (2-stage build),
 [`render.yaml`](render.yaml) (Render Blueprint), plus production settings
 (HTTPS redirect, `secure` cookies, `DATABASE_URL`, WhiteNoise) that switch on
@@ -150,25 +154,28 @@ automatically when `DEBUG=False`.
 ### Steps
 
 1. Push this branch to GitHub (`git push`).
-2. Create a free account at **[render.com](https://render.com)** and connect your
+2. **Create the database on [Neon](https://neon.tech)** (free): sign up → new
+   project → copy the **connection string**
+   (`postgresql://user:pass@ep-….neon.tech/neondb?sslmode=require`).
+3. Create a free account at **[render.com](https://render.com)** and connect your
    GitHub account.
-3. In Render: **New → Blueprint** → pick the `vliliana123/Agri-portfolio` repo.
-   Render reads [`render.yaml`](render.yaml) and provisions **the web service +
-   a free PostgreSQL database** automatically, wiring `DATABASE_URL`, generating
-   a `SECRET_KEY`, and setting `DEBUG=False`.
-4. Click **Apply**. First build takes a few minutes (installs deps, builds React,
-   runs migrations, and — because `SEED_DEMO=true` — loads the demo data).
-5. Open the URL Render gives you (e.g. `https://agri-portfolio.onrender.com`) and
+4. In Render: **New → Blueprint** → pick the `vliliana123/Agri-portfolio` repo.
+   Render reads [`render.yaml`](render.yaml), creates the web service, generates a
+   `SECRET_KEY`, and sets `DEBUG=False`. (`DATABASE_URL` is `sync: false` — you set
+   it manually in the next step.)
+5. In Render → the service's **Environment**: set `DATABASE_URL` to the Neon
+   connection string, and set `SEED_DEMO=true` **once** to populate the fresh Neon
+   database. **Save** → this triggers a deploy that runs migrations + seeds.
+6. Open the URL Render gives you (e.g. `https://agri-portfolio.onrender.com`) and
    log in with `demo@agri.local` / `demo1234`.
-6. **Important:** after the first successful deploy, set the `SEED_DEMO`
-   env var to `false` in the Render dashboard, so future redeploys don't wipe and
-   reseed the database.
+7. **Important:** after the first successful deploy, set `SEED_DEMO` back to
+   `false` in the Render dashboard, so future redeploys don't wipe and reseed the
+   database.
 
-> **Free-tier notes:** the service sleeps after ~15 min idle (first request after
-> that takes ~30–60 s to wake). Render's free Postgres **expires after a limited
-> period** — when it does, create a free **[Neon](https://neon.tech)** Postgres
-> (no expiry), copy its connection string into the `DATABASE_URL` env var in
-> Render, and redeploy. Nothing in the code changes.
+> **Free-tier note:** the Render service sleeps after ~15 min idle (first request
+> after that takes ~30–60 s to wake). Neon's free tier has no expiry, so the data
+> persists. Nothing in the code depends on the DB host — it's driven purely by the
+> `DATABASE_URL` env var (SQLite locally when it's unset, Neon Postgres in prod).
 
 ### Still on the roadmap for a hardened production setup
 
