@@ -63,3 +63,8 @@ cookies.txt
 *.log
 .pytest_cache/
 .mypy_cache/
+
+# =============================================================================
+# Notițe personale — nu în repo
+# =============================================================================
+frontend/src/services/explicatii.md
