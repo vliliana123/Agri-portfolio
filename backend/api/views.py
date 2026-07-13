@@ -513,7 +513,8 @@ class PlatiArendaViewSet(viewsets.ModelViewSet):
             valoare_lei = cantitate
         else:
             try:
-                nivel_arenda = Decimal('1000') #Decimal(str(contract.nivel_arenda))
+                nivel_arenda = Decimal('1000')
+                #Decimal(str(contract.nivel_arenda))
             except Exception:
                 return Response({"error": "Nivel arenda din contract invalid"}, status=status.HTTP_400_BAD_REQUEST)
 

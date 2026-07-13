@@ -21,7 +21,7 @@ tied to the local town-hall reference price (*preț kg primărie*).
 - **Payment recording** — multi-currency (RON, wheat kg, corn kg), automatic
   status recalculation, QR-coded receipts
 - **Yearly price config** — per-year reference prices for wheat and corn
-- **Interval reports** — sum of payments over a date range
+ 
 - **Oblio invoicing** — optional integration with the Romanian Oblio API for
   invoice emission (SPV-ready)
 - **JWT auth in httpOnly cookies** — no tokens in `localStorage`
