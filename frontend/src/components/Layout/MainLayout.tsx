@@ -84,18 +84,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {/* Header cu menu horizontal */}
       <AppBar position="fixed">
         <Toolbar>
-          {/* Logo */}
-          {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Agriculture sx={{ mr: 2, color: 'primary.main', fontSize: 32 }} />
-            <Typography 
-              variant="h5" 
-              className="app-logo"
-              onClick={() => navigate('/')}
-            >
-              🌾 AgriManager
-            </Typography>
-          </Box> */}
-
+         
           {/* Menu horizontal - left side */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
             {/* Dashboard */}

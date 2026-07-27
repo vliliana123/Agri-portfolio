@@ -24,7 +24,7 @@ import { LoginPage } from "./pages/LoginPage";
 import AditionalePage from "./pages/AditionalePage";
 import { AditionaleEditPage } from "./pages/AditionaleEditPage";
 import { AditionaleAddPage } from "./pages/AditionaleAddPage";
-import RaportPlatiArenda from "./pages/RaportPlatiArenda";
+import {RaportPlatiArenda} from "./pages/RaportPlatiArenda";
 
 
 // Pagini temporare pentru test
@@ -78,7 +78,7 @@ function App() {
                           path="/contracte/:id/edit"
                           element={<ContracteEditPage />}
                         />
-
+                        <Route path="/contracte/rapoarte" element={<RaportPlatiArenda/>} />
                         <Route path="/terenuri/" element={<TerenuriPage />} />
                         <Route path="/plati-arenda" element={<PlatiArendaPage />} />
                         <Route path="/plati-arenda/:id/edit" element={<EditPlataArenda />} />

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { getRaport } from '../services/api';
 
-const RaportPlatiArenda: React.FC = () => {
+export const RaportPlatiArenda: React.FC = () => {
   const [dataInceput, setDataInceput] = React.useState('');
   const [dataSfarsit, setDataSfarsit] = React.useState('');
   const [totalValoare, setTotalValoare] = React.useState<number | null>(null);
@@ -57,4 +57,4 @@ const RaportPlatiArenda: React.FC = () => {
   );
 };
 
-export default RaportPlatiArenda;
+
