@@ -20,11 +20,17 @@ export const RaportPlatiArenda: React.FC = () => {
     }
   };
   return (
-    <Box p={4}>
-      <Typography variant="h4" gutterBottom>
+    <Box p={{ xs: 2, md: 4 }}>
+      <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
         Raport Plăți Arendă
       </Typography>
-      <Box display="flex" gap={2} mb={2}>
+      <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
+          gap: 2,
+          mb: 2,
+        }}>
         <TextField
           label="Data început"
           type="date"

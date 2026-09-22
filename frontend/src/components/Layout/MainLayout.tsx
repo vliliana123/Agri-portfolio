@@ -9,6 +9,12 @@ import {
   Menu,
   MenuItem,
   Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import {
   People,
@@ -18,6 +24,7 @@ import {
   Terrain,
   Payments,
   Logout as LogoutIcon,
+  Menu as MenuIcon,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLogin } from '../../context/LoginContext';
@@ -25,6 +32,40 @@ import { useLogin } from '../../context/LoginContext';
 interface MainLayoutProps {
   children: React.ReactNode;
 }
+
+
+type ElementMeniu = { text: string; path: string };
+type GrupMeniu = {
+  titlu: string;
+  path: string;
+  icon: React.ReactNode;
+  copii: ElementMeniu[];
+};
+
+const grupuriMeniu: GrupMeniu[] = [
+  { titlu: 'Dashboard', path: '/', icon: <DashboardIcon />, copii: [] },
+  {
+    titlu: 'Arendatori', path: '/arendatori', icon: <People />,
+    copii: [{ text: 'Adaugă arendator', path: '/arendatori/new/' }],
+  },
+  {
+    titlu: 'Contracte', path: '/contracte/', icon: <Description />,
+    copii: [
+      { text: 'Adaugă contract', path: '/contracte/new/' },
+      { text: 'Rapoarte', path: '/contracte/rapoarte' },
+    ],
+  },
+  {
+    titlu: 'Adiționale', path: '/aditionale', icon: <Description />,
+    copii: [{ text: 'Adaugă adițional', path: '/aditionale/new/' }],
+  },
+  { titlu: 'Terenuri', path: '/terenuri', icon: <Terrain />, copii: [] },
+  {
+    titlu: 'Plăți arendă', path: '/plati-arenda', icon: <Payments />,
+    copii: [{ text: 'Setează preț', path: '/plati-arenda/pret' }],
+  },
+];
+
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
@@ -42,6 +83,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [terenuriMenu, setTerenuriMenu] = useState<null | HTMLElement>(null);
   const [platiArendaMenu, setPlatiArendaMenu] = useState<null | HTMLElement>(null);
   const [aditionaleMenu, setAditionaleMenu] = useState<null | HTMLElement>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -84,9 +128,15 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {/* Header cu menu horizontal */}
       <AppBar position="fixed">
         <Toolbar>
-         
+          <IconButton
+            onClick={() => setDrawerOpen(true)}
+            sx={{ display: { xs: 'flex', md: 'none' }, color: 'text.primary', mr: 1 }}
+          >
+            <MenuIcon />
+          </IconButton>
+
           {/* Menu horizontal - left side */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2, flex: 1 }}>
             {/* Dashboard */}
             <Button
               startIcon={<DashboardIcon />}
@@ -219,7 +269,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           {/* User Profile & Logout - Right side */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
-            <Typography variant="body2" sx={{ color: 'text.primary' }}>
+            <Typography variant="body2" sx={{ color: 'text.primary', display: { xs: 'none', md: 'block' } }}>
               Conectat ca: <strong>{user?.name}</strong>
             </Typography>
             <Button
@@ -238,17 +288,59 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </Toolbar>
       </AppBar>
 
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <Box sx={{ width: { xs: 240, sm: 260 } }}>
+          <List>
+              {grupuriMeniu.map((grup) => (
+            <React.Fragment key={grup.path}>
+              <ListItemButton
+                selected={location.pathname === grup.path}
+                onClick={() => {
+                  navigate(grup.path);
+                  setDrawerOpen(false);
+                }}
+              >
+                <ListItemIcon>{grup.icon}</ListItemIcon>
+                <ListItemText
+                  primary={grup.titlu}
+                  slotProps={{ primary: { fontWeight: 600 } }}
+                />
+              </ListItemButton>
+
+              {grup.copii.map((copil) => (
+                <ListItemButton
+                  key={copil.path}
+                  sx={{ pl: 7 }}
+                  selected={location.pathname === copil.path}
+                  onClick={() => {
+                    navigate(copil.path);
+                    setDrawerOpen(false);
+                  }}
+                >
+                  <ListItemText primary={copil.text} />
+                </ListItemButton>
+              ))}
+            </React.Fragment>
+          ))}
+
+          </List>
+        </Box>
+      </Drawer>
+
       {/* Main Content */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           bgcolor: 'background.default',
-          mt: 8, // Space for AppBar
-          minHeight: 'calc(100vh - 64px)',
-        }}
-      >
-        <Container maxWidth="xl" sx={{ py: 3 }}>
+          }}
+      > 
+        <Toolbar />
+        <Container maxWidth="xl" sx={{ py: 3, px: { xs: 1, sm: 3 } }}>
           {children}
         </Container>
       </Box>

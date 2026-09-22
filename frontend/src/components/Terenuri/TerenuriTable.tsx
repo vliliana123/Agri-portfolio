@@ -7,8 +7,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
+  IconButton,
+  Tooltip
 } from "@mui/material";
+import { Visibility as VisibilityIcon } from "@mui/icons-material";
+
 import { Teren } from "../../types";
 
 // Funcție pentru formatare data dd-mm-yyyy
@@ -32,43 +35,7 @@ export interface TerenuriTableProps {
 
 export const TerenuriTable = React.memo(
   ({ terenuri, onViewDetails }: TerenuriTableProps) => {
-    // Agregare date: grupeaza după contract, calculează suma suprafață și zone
-    // console.log("terenuri primite:", terenuri);
-    // const aggregatedData = useMemo(() => {
-    //   if (!terenuri || terenuri.length === 0) return [];
-
-    //   const contractMap = new Map<number, any>();
-
-    //   terenuri.forEach((teren) => {
-    //     const contractId = teren.contract;
-    //     if (!contractId) return;
-    //     if (!contractMap.has(contractId)) {
-    //       contractMap.set(contractId, {
-    //         id_contract: teren.id_contract,
-    //         nr_contract: teren.nr_contract,
-    //         data_contract: teren.data_contract,
-    //         nume_arendator: teren.nume_arendator,
-    //         suprafata_totala: 0,
-    //         zone_set: new Set<string>(),
-    //       });
-    //     }
-
-    //     const contractData = contractMap.get(contractId)!;
-    //     // Adunăm suprafața
-    //     contractData.suprafata_totala += parseFloat(teren.suprafata) || 0;
-    //     // Adunăm zona în set (pentru a evita duplicatele)
-    //     if (teren.zona_nume) {
-    //       contractData.zone_set.add(teren.zona_nume);
-    //     }
-    //   });
-
-    //   // Convertim Map la array și transformăm set-ul în string cu virgulă
-    //   return Array.from(contractMap.values()).map((contract) => ({
-    //     ...contract,
-    //     zone_string: Array.from(contract.zone_set).join(", "),
-    //   }));
-    // }, [terenuri]);
-
+     
     return (
       <TableContainer
         component={Paper}
@@ -78,7 +45,15 @@ export const TerenuriTable = React.memo(
           overflowX: "auto",
         }}
       >
-        <Table sx={{ tableLayout: "auto" }}>
+        <Table
+          size="small"
+          sx={{
+            tableLayout: "auto",
+            "& .MuiTableCell-root": {
+              px: { xs: 1, sm: 2 },
+            },
+          }}
+        >
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell sx={{ whiteSpace: "nowrap", fontWeight: "bold" }}>
@@ -162,7 +137,7 @@ export const TerenuriTable = React.memo(
                     textAlign: "center",
                   }}
                 >
-                  {teren.suprafata} mp
+                  {teren.suprafata} ha
                 </TableCell>
                 <TableCell
                   sx={{
@@ -173,15 +148,17 @@ export const TerenuriTable = React.memo(
                 >
                   {teren.zona_nume || "-"}
                 </TableCell>
-                <TableCell sx={{ whiteSpace: "nowrap", padding: "8px 4px" }}>
-                  <Button
-                    size="small"
-                    onClick={() => onViewDetails(teren.id_contract)}
-                    sx={{ textTransform: "none", fontSize: "0.75rem" }}
-                  >
-                    Detalii
-                  </Button>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>
+                  <Tooltip title="Detalii">
+                    <IconButton
+                      size="small"
+                      onClick={() => onViewDetails(teren.id_contract)}
+                    >
+                      <VisibilityIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>

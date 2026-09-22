@@ -64,13 +64,15 @@ export const LoginPage = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          minHeight: '100vh',
+        
+          minHeight: '100dvh',
+          py: 4,
         }}
       >
         <Paper
           elevation={3}
           sx={{
-            padding: 4,
+            p: { xs: 2.5, sm: 4 },
             width: '100%',
             borderRadius: 2,
           }}
@@ -93,6 +95,8 @@ export const LoginPage = () => {
             onChange={(e) => setEmail(e.target.value)}
             margin="normal"
             disabled={loading}
+            autoComplete="email"
+
             onKeyPress={handleKeyPress}
           />
 
@@ -104,6 +108,8 @@ export const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             margin="normal"
             disabled={loading}
+            autoComplete="current-password"
+
             onKeyPress={handleKeyPress}
           />
 

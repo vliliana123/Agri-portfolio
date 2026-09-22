@@ -194,7 +194,7 @@ export const ContracteAddPage: React.FC = () => {
       >
         <Typography
           variant="h4"
-          sx={{ fontWeight: 600, color: "#2c3e50", flex: 1 }}
+          sx={{ fontWeight: 600, color: "#2c3e50", flex: 1,fontSize: { xs: "1.5rem", sm: "2rem" }, }}
         >
           Adaugă Contract și Teren
         </Typography>

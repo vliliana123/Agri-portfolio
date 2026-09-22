@@ -112,14 +112,27 @@ export const ChitantaPage = () => {
  
 
   return (
-    <Box sx={{ padding: 3, maxWidth: "800px", margin: "0 auto" }}>
-      <Paper sx={{ padding: 3 }}>
+    <Box sx={{ padding: { xs: 1.5, sm: 3 }, maxWidth: "800px", margin: "0 auto" }}>
+       <Paper sx={{ padding: { xs: 2, sm: 3 } }}>
+
         <Typography variant="h5" sx={{ mb: 3, textAlign: "center" }}>
           Chitanță Plată Arendă
         </Typography>
 
         {/* QR Code */}
-        <Box sx={{ display: "flex", justifyContent: "center", marginY: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginY: 3,
+            '& svg': {
+              width: '100%',
+              height: 'auto',
+              maxWidth: 256,
+            },
+          }}
+        >
+
           <QRCodeSVG
             value={JSON.stringify({
               uuid: plata.uuid,
@@ -141,22 +154,31 @@ export const ChitantaPage = () => {
           <Typography variant="h6" sx={{ mb: 2 }}>
             Detalii Plată
           </Typography>
-          <Button onClick={window.print} variant="outlined" sx={{ mb: 2 }}>
-            Print
-          </Button>
-          <Button onClick={handlePaid} variant="outlined" 
-          disabled={markingPaid||plata.status==="platita"|| plata.status==="anulata"} 
-          sx={{ mb: 2 }}>
-            Mark as Paid
-          </Button>
-          <Button
-            onClick={handleEmitOblio}
-            variant="outlined"
-            sx={{ mb: 2 }}
-            disabled={emitOblio || plata.oblio_status === "SUBMITTED"}
-          >
-            {emitOblio ? "Se trimite..." : "Adauga in Oblio"}
-          </Button>
+          <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 1,
+                mb: 2,
+              }}
+            >
+              <Button onClick={window.print} variant="outlined"  >
+                Print
+              </Button>
+              <Button onClick={handlePaid} variant="outlined" 
+              disabled={markingPaid||plata.status==="platita"|| plata.status==="anulata"} 
+              >
+                Mark as Paid
+              </Button>
+              <Button
+                onClick={handleEmitOblio}
+                variant="outlined"
+                
+                disabled={emitOblio || plata.oblio_status === "SUBMITTED"}
+              >
+                {emitOblio ? "Se trimite..." : "Adauga in Oblio"}
+              </Button>
+          </Box>
 
           {/* //Oblio status and message */}
           { plata.oblio_status||plata.oblio_invoice_id||plata.oblio_submitted_at ? (

@@ -100,12 +100,21 @@ const handleDeleteAditional = async (id:number) => {
     console.error("❌ Eroare:", err);
   }
 };
-  const PaginationComponent = () => (
+const PaginationComponent = () => (
     <Pagination
       count={totalPages}
       page={page}
       variant="outlined"
-      size="large"
+      size="small"
+      siblingCount={0}
+      sx={{
+        "& .MuiPaginationItem-root": {
+          fontSize: "12px",
+          minWidth: { xs: 28, sm: 36 },
+          height: { xs: 28, sm: 36 },
+          margin: { xs: "0 1px", sm: "0 3px" },
+        },
+      }}
       onChange={handlePageChange}
       color="primary"
     />
@@ -126,7 +135,7 @@ const handleDeleteAditional = async (id:number) => {
   return (
     <Box sx={{ backgroundColor: "white", minHeight: "100vh" }}>
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3, width: "100%", px: { xs: 1, md: 2 }, pt: { xs: 3, sm: 4, md: 5 } }}>
-        <Box sx={{ width: "85%" }}>
+        <Box sx={{ width: { xs: "100%", md: "85%" } }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} flexWrap={{ xs: "wrap", sm: "nowrap" }} gap={2}>
             <Typography variant="h4" sx={{ fontWeight: 600, color: "#2c3e50", fontSize: { xs: "1.5rem", sm: "2rem" } }}>
               Aditionale ({aditionale.length})
