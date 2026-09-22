@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Box,
   CircularProgress,
   Alert,
   Typography,
@@ -12,7 +13,9 @@ import {
   TextField,
   MenuItem,
   Select,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { getContracte, api } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { Contract, PlatiArenda } from "../types";
@@ -27,6 +30,8 @@ export const PlatiArendaPage = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
+  const theme = useTheme();
+  const esteMobil = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -150,20 +155,26 @@ export const PlatiArendaPage = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Plăți Arendă - Căutare</h1>
+        <Box sx={{ p: { xs: 1.5, sm: 2.5 } }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 600, mb: 2, fontSize: { xs: "1.5rem", sm: "2rem" } }}
+          >
+            Plăți Arendă - Căutare
+          </Typography>
 
-      <div style={{ marginBottom: "20px" }}>
-        <Typography>Caută după Nume Arendator sau CNP</Typography>
-        <Input autoFocus
-          type="text"
-          placeholder="ex: Ion Popescu sau 1234567890123"
-          value={searchText}
-          
-          onChange={(e) => setSearchText(e.target.value)}
-          fullWidth
-        />
-      </div>
+        <Box sx={{ mb: 2.5, maxWidth: { xs: "100%", sm: 400 } }}>
+
+          <Typography>Caută după Nume Arendator sau CNP</Typography>
+          <Input autoFocus
+            type="text"
+            placeholder="ex: Ion Popescu sau 1234567890123"
+            value={searchText}
+            
+            onChange={(e) => setSearchText(e.target.value)}
+            fullWidth
+          />
+        </Box>
 
      
 
@@ -171,9 +182,12 @@ export const PlatiArendaPage = () => {
       {error && <Alert severity="error">{error}</Alert>}
 
       {contracte.length > 0 && (
-        <div style={{ marginTop: "20px" }}>
-          <h2>Contracte ({contracte.length})</h2>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <Box sx={{ mt: 2.5, overflowX: "auto" }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Contracte ({contracte.length})
+          </Typography>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 480 }}>
+
             <thead>
               <tr style={{ borderBottom: "2px solid #ddd" }}>
                 <th style={{ padding: "10px", textAlign: "left" }}>
@@ -199,49 +213,54 @@ export const PlatiArendaPage = () => {
                   <td style={{ padding: "10px" }}>{contract.nr_contract}</td>
                   <td style={{ padding: "10px" }}>{contract.data_contract}</td>
                   <td style={{ padding: "10px" }}>{contract.arendator.nume}</td>
-                  <td style={{ padding: "10px", textAlign: "center" }}>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      onClick={() => handleListaPlati(contract)}
-                      style={{ marginRight: "10px" }}
-                    >
-                      Lista Plăți
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      onClick={() =>
-                        navigate(`/contracte/${contract.id_contract}/arenda`)
-                      }
-                    >
-                      Adauga Plati
-                    </Button>
+                                    <td style={{ padding: "10px", textAlign: "center" }}>
+                    <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 1, "& .MuiButton-root": { whiteSpace: "nowrap"}, }}>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => handleListaPlati(contract)}
+                      >
+                        Lista Plăți
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() =>
+                          navigate(`/contracte/${contract.id_contract}/arenda`)
+                        }
+                      >
+                        Adauga Plati
+                      </Button>
+                    </Box>
                   </td>
+
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        </Box>
       )}
 
       {/* MODAL PENTRU LISTA PLATI */}
-      <Dialog
+           <Dialog
         open={modalOpen}
         onClose={handleModalClose}
         maxWidth="lg"
         fullWidth
+        fullScreen={esteMobil}
         PaperProps={{
-          style: {
-            minHeight: "80vh",
-            maxHeight: "90vh",
+          sx: {
+            minHeight: { xs: "100%", sm: "80vh" },
+            maxHeight: { xs: "100%", sm: "90vh" },
           },
         }}
       >
-        <DialogTitle>
+
+        <DialogTitle sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" }, px: { xs: 2, sm: 3 } }}>
           Lista Plăți - Contract {selectedContract?.nr_contract}
         </DialogTitle>
-        <DialogContent style={{ overflowY: "auto" }}>
+        <DialogContent sx={{ overflowY: "auto", px: { xs: 1, sm: 3 } }}>
+
           {platiLoading && <CircularProgress />}
           {platiError && <Alert severity="error">{platiError}</Alert>}
 
@@ -250,8 +269,14 @@ export const PlatiArendaPage = () => {
           )}
 
           {!platiLoading && platiList.length > 0 && (
-            <div style={{ overflowX: "auto", marginTop: "20px" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <Box sx={{ overflowX: "auto", mt: 2.5 }}>
+              <table
+                style={{
+                  width: "100%",
+                  minWidth: 900,
+                  borderCollapse: "collapse",
+                }}
+              >
                 <thead>
                   <tr
                     style={{
@@ -400,15 +425,14 @@ export const PlatiArendaPage = () => {
                           rows={1}
                         />
                       </td>
-                      <td
-                        style={{
-                          padding: "10px",
-                          textAlign: "center",
-                          display: "flex",
-                          gap: "5px",
-                          justifyContent: "center",
-                        }}
-                      >
+                      <td style={{ padding: "10px", whiteSpace: "nowrap" }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 0.5,
+                            justifyContent: "center",
+                          }}
+                        >
                         {plata.isModified && (
                           <Button
                             size="small"
@@ -437,18 +461,19 @@ export const PlatiArendaPage = () => {
                         >
                           Delete
                         </Button>
+                        </Box>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            </Box>
           )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleModalClose}>Închide</Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 };

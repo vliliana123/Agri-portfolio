@@ -349,8 +349,8 @@ export const ArendaPage = () => {
   };
 
   return (
-    <div>
-      <Paper sx={{ padding: 2, marginTop: 2, marginBottom: 2 }}>
+    <Box sx={{ p: { xs: 1, sm: 2 } }}>
+      <Paper sx={{ p: { xs: 1.5, sm: 2 }, mt: 2, mb: 2 }}>
         <Typography>
           Arenda Contract Nr:{contract?.nr_contract}/ {contract?.data_contract}
         </Typography>
@@ -396,7 +396,10 @@ export const ArendaPage = () => {
               </Typography>
             ) : (
               <TableContainer component={Paper} sx={{ mt: 1 }}>
-                <Table size="small">
+                <Table
+                  size="small"
+                  sx={{ "& .MuiTableCell-root": { px: { xs: 1, sm: 2 }, whiteSpace: "nowrap" } }}
+                >
                   <TableHead>
                     <TableRow>
                       <TableCell>ID</TableCell>
@@ -491,7 +494,7 @@ export const ArendaPage = () => {
           </Box>
         )}
 
-        <Paper sx={{ padding: 2, marginTop: 3 }}>
+        <Paper sx={{ p: { xs: 1.5, sm: 2 }, mt: 3 }}>
           <Box
             sx={{
               display: "grid",
@@ -611,16 +614,24 @@ export const ArendaPage = () => {
           disabled={loading}
           color="primary"
           onClick={handleGenerareChitanta}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
         >
           {loading ? "Se generează..." : "Generează Chitanță"}
         </Button>
       </Paper>
       {qrData && (
-        <Paper sx={{ padding: 2, marginTop: 3 }}>
+        <Paper sx={{ p: { xs: 1.5, sm: 2 }, mt: 3 }}>
           <Typography variant="h6">Chitanță Generată</Typography>
 
           {/* QR Code */}
-          <Box sx={{ display: "flex", justifyContent: "center", marginY: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              my: 2,
+              "& svg": { width: "100%", height: "auto", maxWidth: 256 },
+            }}
+          >
             <QRCodeSVG
               value={JSON.stringify({
                 uuid: qrData.uuid,
@@ -662,6 +673,6 @@ export const ArendaPage = () => {
           <Typography>UUID: {qrData.uuid}</Typography>
         </Paper>
       )}
-    </div>
+    </Box>
   );
 };

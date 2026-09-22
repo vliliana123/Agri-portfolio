@@ -138,10 +138,14 @@ export const ArendatoriPage: React.FC = () => {
       count={totalPages}
       page={page}
       variant="outlined"
-      size="large"
+      size="small"
+      siblingCount={0}
       sx={{
         "& .MuiPaginationItem-root": {
           fontSize: "12px",
+          minWidth: { xs: 28, sm: 36 },
+          height: { xs: 28, sm: 36 },
+          margin: { xs: "0 1px", sm: "0 3px" }
         },
       }}
       onChange={handlePageChange}
@@ -163,7 +167,8 @@ export const ArendatoriPage: React.FC = () => {
         }}
       >
         {/* Tabel Material-UI compact */}
-        <Box sx={{ width: "85%" }}>
+        <Box sx={{ width: { xs: "100%", md: "85%" } }}>
+
           {/* Header and Search on same line */}
           <Box
             display="flex"
@@ -197,6 +202,7 @@ export const ArendatoriPage: React.FC = () => {
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+             {/* <Box sx={{ display: { xs: "none", sm: "flex" }, justifyContent: "center", mb: 2}}>  */}
             <PaginationComponent />
           </Box>
 

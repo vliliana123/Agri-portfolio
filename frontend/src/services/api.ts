@@ -9,13 +9,17 @@ import {Arendator,EmitOblioResponse,
   ConfigAnCreate,
   ConfigAnUpdate} from '../types';
 
-// În dev (localhost / IP de rețea) backend-ul rulează separat pe :8000.
+// În dev (localhost / IP de rețea, ex. telefon pe același WiFi) backend-ul
+// rulează separat pe :8000. process.env.NODE_ENV e 'development' la `npm start`
+// și 'production' la `npm run build`, deci merge indiferent de hostname
+// (spre deosebire de o verificare pe 'localhost'/'127.0.0.1', care rata orice
+// acces prin IP-ul din rețeaua locală, ex. de pe mobil).
 // În producție frontend-ul și API-ul sunt pe ACELAȘI domeniu → cale relativă `/api`.
 const hostname = window.location.hostname;
-const isLocalDev = hostname === 'localhost' || hostname === '127.0.0.1';
+const isDev = process.env.NODE_ENV !== 'production';
 const API_BASE_URL =
   process.env.REACT_APP_API_URL ||
-  (isLocalDev ? `http://${hostname}:8000/api` : '/api');
+  (isDev ? `http://${hostname}:8000/api` : '/api');
 
 export const api= axios.create({
     baseURL: API_BASE_URL,

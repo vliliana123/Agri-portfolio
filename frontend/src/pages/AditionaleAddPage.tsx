@@ -155,7 +155,7 @@ export const AditionaleAddPage: React.FC = () => {
       >
         <Typography
           variant="h4"
-          sx={{ fontWeight: 600, color: "#2c3e50", flex: 1 }}
+          sx={{ fontWeight: 600, color: "#2c3e50", flex: 1,fontSize: { xs: "1.5rem", sm: "2rem" }, }}
         >
           Adaugă Adițional
         </Typography>
@@ -188,7 +188,7 @@ export const AditionaleAddPage: React.FC = () => {
           {!selectedContract ? (
             <Box sx={{ mb: 3 }}>
               <TextField
-                label="Caută contract (nr contract / nume / CNP)"
+                label="Caută contract (nume / CNP)"
                 variant="outlined"
                 fullWidth
                 size="small"
@@ -244,11 +244,13 @@ export const AditionaleAddPage: React.FC = () => {
             <Box
               sx={{ mb: 3, p: 2, backgroundColor: "#e8f5e9", borderRadius: 1 }}
             >
-              <Box
+            <Box
                 sx={{
                   display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
                   justifyContent: "space-between",
-                  alignItems: "center",
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  gap: 1,
                 }}
               >
                 <Typography variant="subtitle1">

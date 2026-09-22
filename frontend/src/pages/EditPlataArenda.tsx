@@ -132,7 +132,7 @@ export const EditPlataArenda: React.FC = () => {
                 updated_at: formData.updated_at,
             };
 
-            const response = await api.put(`/plati-arenda/${id}/`, updateData);
+            const response = await api.patch(`/plati-arenda/${id}/`, updateData);
             console.log('Update response:', response.data);
             
             // Update form data cu timestamp-ul din backend
@@ -166,9 +166,10 @@ export const EditPlataArenda: React.FC = () => {
     };
 
     return (
-        <Box sx={{ maxWidth: 600, margin: 'auto', padding: 3 }}>
-            <Paper elevation={3} sx={{ padding: 3 }}>
-                <Typography variant="h4" sx={{ marginBottom: 3, fontWeight: 'bold' }}>
+        <Box sx={{ maxWidth: 600, margin: 'auto', padding: { xs: 1.5, sm: 3 } }}>
+            <Paper elevation={3} sx={{ padding: { xs: 2, sm: 3 } }}>
+
+                <Typography variant="h4" sx={{ marginBottom: 3, fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2rem' } }}>
                     Editare Plată Arendă
                 </Typography>
 
@@ -312,7 +313,13 @@ export const EditPlataArenda: React.FC = () => {
                         variant="outlined"
                     />
 
-                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', marginTop: 2 }}>
+                    <Box sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column-reverse', sm: 'row' },
+                    gap: 2,
+                    justifyContent: 'flex-end',
+                    marginTop: 2,
+                }}>
                         <Button
                             variant="outlined"
                             color="inherit"

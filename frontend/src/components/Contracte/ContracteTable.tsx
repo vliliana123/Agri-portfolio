@@ -7,8 +7,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
+  IconButton ,
+  Tooltip
 } from "@mui/material";
+import {
+  Visibility as VisibilityIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
 import { Contract } from "../../types";
 
 import { formatDate, calculateExpiryYear } from "../../services/api";
@@ -35,7 +41,15 @@ export const ContracteTable = React.memo(
           overflowX: "auto",
         }}
       >
-        <Table sx={{ tableLayout: "fixed", width: "100%" }}>
+        <Table
+          size="small"
+          sx={{
+            width: "100%",
+            "& .MuiTableCell-root": {
+              px: { xs: 1, sm: 2 },
+            },
+          }}
+        >
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell
@@ -43,7 +57,7 @@ export const ContracteTable = React.memo(
                   whiteSpace: "normal",
                   wordWrap: "break-word",
                   fontWeight: "bold",
-                  flex: 1,
+                 
                 }}
               >
                 Arendator
@@ -64,6 +78,7 @@ export const ContracteTable = React.memo(
                   fontWeight: "bold",
                   width: "110px",
                   textAlign: "center",
+                   
                 }}
               >
                 Data
@@ -74,6 +89,8 @@ export const ContracteTable = React.memo(
                   fontWeight: "bold",
                   width: "130px",
                   textAlign: "center",
+                  display: { xs: "none", md: "table-cell" },
+
                 }}
               >
                 Perioada
@@ -84,6 +101,8 @@ export const ContracteTable = React.memo(
                   fontWeight: "bold",
                   width: "100px",
                   textAlign: "center",
+                  display: { xs: "none", md: "table-cell" },
+
                 }}
               >
                 Expira
@@ -92,12 +111,13 @@ export const ContracteTable = React.memo(
                 sx={{
                   whiteSpace: "nowrap",
                   fontWeight: "bold",
-                  flex: 1,
+                  width: 130,
                   textAlign: "center",
                 }}
               >
                 Acțiuni
               </TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
@@ -108,7 +128,7 @@ export const ContracteTable = React.memo(
                     whiteSpace: "normal",
                     wordWrap: "break-word",
                     fontSize: "0.875rem",
-                    flex: 1,
+                    
                   }}
                 >
                   {contract.arendator.nume}
@@ -129,6 +149,8 @@ export const ContracteTable = React.memo(
                     width: "110px",
                     fontSize: "0.875rem",
                     textAlign: "center",
+                    
+
                   }}
                 >
                   {formatDate(contract.data_contract)}
@@ -139,6 +161,8 @@ export const ContracteTable = React.memo(
                     width: "130px",
                     fontSize: "0.875rem",
                     textAlign: "center",
+                    display: { xs: "none", md: "table-cell" },
+
                   }}
                 >
                   {contract.perioada_contract}
@@ -149,6 +173,8 @@ export const ContracteTable = React.memo(
                     width: "100px",
                     fontSize: "0.875rem",
                     textAlign: "center",
+                    display: { xs: "none", md: "table-cell" },
+
                   }}
                 >
                   {calculateExpiryYear(
@@ -156,36 +182,28 @@ export const ContracteTable = React.memo(
                     contract.perioada_contract,
                   )}
                 </TableCell>
-                <TableCell
-                  sx={{
-                    whiteSpace: "nowrap",
-                    flex: 1,
-                    textAlign: "center",
-                    padding: "8px 4px",
-                  }}>
-                  <Button
-                    size="small"
-                    onClick={() => onViewDetails(contract)}
-                    sx={{ textTransform: "none", fontSize: "0.75rem" }}
-                  >
-                    Detalii
-                  </Button>
-                  <Button
-                    size="small"
-                    onClick={() => onEdit(contract)}
-                    sx={{ textTransform: "none", fontSize: "0.75rem" }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    size="small"
-                    color="error"
-                    onClick={() => onDelete(contract.id_contract)}
-                    sx={{ textTransform: "none", fontSize: "0.75rem" }}
-                  >
-                    Șterge
-                  </Button>
+                <TableCell sx={{ whiteSpace: "nowrap", textAlign: "center" }}>
+                  <Tooltip title="Detalii">
+                    <IconButton size="small" onClick={() => onViewDetails(contract)}>
+                      <VisibilityIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Editează">
+                    <IconButton size="small" onClick={() => onEdit(contract)}>
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Șterge">
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() => onDelete(contract.id_contract)}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>

@@ -105,10 +105,13 @@ export const ContractePage: React.FC = () => {
       count={totalPages}
       page={page}
       variant="outlined"
-      size="large"
+      siblingCount={0}
       sx={{
         "& .MuiPaginationItem-root": {
           fontSize: "12px",
+          minWidth: { xs: 28, sm: 36 },
+          height: { xs: 28, sm: 36 },
+          margin: { xs: "0 1px", sm: "0 3px" },
         },
       }}
       onChange={handlePageChange}
@@ -154,7 +157,8 @@ export const ContractePage: React.FC = () => {
         }}
       >
         {/* Tabel Material-UI */}
-        <Box sx={{ width: "85%" }}>
+        <Box sx={{ width: { xs: "100%", md: "85%" } }}>
+
           {/* Header and Search on same line */}
           <Box
             display="flex"
@@ -165,7 +169,7 @@ export const ContractePage: React.FC = () => {
             gap={2}
           >
             <Typography
-              variant="h1"
+              variant="h4"
               sx={{
                 fontWeight: 600,
                 color: "#2c3e50",
@@ -180,7 +184,7 @@ export const ContractePage: React.FC = () => {
               size="small"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Nr. contract sau arendator..."
+              placeholder="CNP sau Nume arendator..."
               sx={{
                 width: { xs: "100%", sm: 200 },
               }}

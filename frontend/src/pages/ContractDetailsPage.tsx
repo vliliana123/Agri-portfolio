@@ -54,7 +54,7 @@ export const ContractDetailsPage: React.FC = () => {
 
   const handleBack = () => {
     const state = effectiveSearch ? { search: effectiveSearch } : undefined;
-    navigate('/contracte/list_contracte', { state });
+    navigate('/contracte/', { state });
   };
 
   const formatDate = (value?: string | Date | null) => {
@@ -116,11 +116,18 @@ export const ContractDetailsPage: React.FC = () => {
         }}
       >
          
-        <Typography
+        <Button
+          startIcon={<ArrowBack />}
           onClick={handleBack}
+          variant="outlined"
+          size="small"
+        >
+          Înapoi
+        </Button>
+        <Typography
           component="h1"
           sx={{
-            fontSize: { xs: "1.5rem", sm: "1.5rem" },
+            fontSize: { xs: "1.25rem", sm: "1.5rem" },
             lineHeight: { xs: 1.3, sm: 1.2 },
           }}
         >
@@ -145,7 +152,7 @@ export const ContractDetailsPage: React.FC = () => {
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-              gap: 2,
+              gap: { xs: 1, sm: 2 },
             }}
           >
             <Typography variant="body2">
@@ -175,7 +182,7 @@ export const ContractDetailsPage: React.FC = () => {
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-              gap: 2,
+                      gap: { xs: 1, sm: 2 },
             }}
           >
             <Typography variant="body2">
@@ -215,7 +222,7 @@ export const ContractDetailsPage: React.FC = () => {
                         sm: "1fr 1fr", // Tablet: 2 coloane
                         md: "1fr 1fr 1fr", // Desktop: 3 coloane
                       },
-                      gap: 3,
+                      gap: { xs: 1.5, md: 3 },
                     }}
                   >
                     <Box>
@@ -291,7 +298,7 @@ export const ContractDetailsPage: React.FC = () => {
           <Button
             variant="contained"
             onClick={() => navigate(`/contracte/${contractId}/arenda`)}
-            sx={{ mt: 1 }}
+            sx={{ mt: 1, width: { xs: "100%", sm: "auto" } }}
           >
             Adaugă Plată Arendă
           </Button>

@@ -13,9 +13,17 @@ import { formatDate } from "../../services/api";
 
 export const AditionaleDetailsModal = ({ open, onClose, aditional }: { open: boolean; onClose: () => void; aditional: Aditionale | null }) => {
     return (
-  <Dialog open={open} onClose={onClose}>
-    <DialogTitle>Detalii Aditional</DialogTitle>
-    <DialogContent>
+  <Dialog
+    open={open}
+    onClose={onClose}
+    fullWidth
+    maxWidth="sm"
+    PaperProps={{ sx: { m: { xs: 1.5, sm: 4 }, width: { xs: "calc(100% - 24px)", sm: "100%" } } }}
+  >
+    <DialogTitle sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" }, pb: 1 }}>
+      Detalii Aditional
+    </DialogTitle>
+    <DialogContent sx={{ "& .MuiTypography-root": { fontSize: { xs: "0.9rem", sm: "1rem" }, mb: 0.5 } }}>
       {aditional ? (
         <Box>
           <Typography>Numar Aditional: {aditional.nr_aditional}</Typography>

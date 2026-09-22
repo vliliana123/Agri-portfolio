@@ -138,7 +138,7 @@ const resetForm=()=>{
   return (
     <Box display="flex" flexDirection="column" alignItems="center" width="100%">
       <Container maxWidth="sm" sx={{ py: 4 }}>
-        <Typography variant="h4" sx={{ mb: 3 }}>
+        <Typography variant="h4" sx={{ mb: 3, fontSize: { xs: '1.25rem', sm: '2rem' } }}>
           Setare Preț/kg Grâu și Porumb
         </Typography>
        {/**Form */}
@@ -151,7 +151,7 @@ const resetForm=()=>{
         <form onSubmit= {handleSubmit}>
           <Box sx={{
             display:'grid',
-            gridTemplateColumns: {xs:'1fr',md:'1fr 1fr',sm:'1fr 1fr 1fr'},
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
             gap:2,
             mb:2
           }}>
@@ -188,7 +188,7 @@ const resetForm=()=>{
               disabled={ loading}
             />
           </Box>
-          <Box sx={{}}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
             <Button
               type="submit"
               variant="contained" startIcon={<Save />}   disabled={loading}>
@@ -196,7 +196,7 @@ const resetForm=()=>{
               </Button>
               {editingId && (
                 <Button
-                  variant="outlined" onClick={resetForm} disabled={loading} sx={{ ml: 2 }}>
+                  variant="outlined" onClick={resetForm} disabled={loading}>
                   Anulează
                 </Button>
               )}
@@ -215,7 +215,7 @@ const resetForm=()=>{
         ) : configList.length === 0 ? (
           <Typography color="text.secondary">Nu există configurări. Adaugă prima!</Typography>
         ) : (
-          <TableContainer>
+          <TableContainer sx={{ overflowX: 'auto' }}>
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#f5f5f5" }}>

@@ -26,7 +26,7 @@ export const TerenuriPage: React.FC = () => {
     
     const loadTerenuri = useCallback(async () => {
       try {
-        setLoading(true);
+        
         setError(null);
          const offset = (page - 1) * 50;
       const response = await getTerenuri(searchTerm, 50, offset);
@@ -41,7 +41,7 @@ export const TerenuriPage: React.FC = () => {
         setError(errorMsg);
         console.error("Eroare:", err);
       } finally {
-        setLoading(false);
+ 
       }
        
     }, [page, searchTerm]);
@@ -83,10 +83,13 @@ const PaginationComponent = () => (
       count={totalPages}
       page={page}
       variant="outlined"
-      size="large"
+      siblingCount={0}
       sx={{
         "& .MuiPaginationItem-root": {
           fontSize: "12px",
+          minWidth: { xs: 28, sm: 36 },
+          height: { xs: 28, sm: 36 },
+          margin: { xs: "0 1px", sm: "0 3px" },
         },
       }}
       onChange={handlePageChange}
@@ -132,7 +135,8 @@ const PaginationComponent = () => (
           }}
         >
           {/* Inner container - 85% width */}
-          <Box sx={{ width: "85%" }}>
+          <Box sx={{ width: { xs: "100%", md: "85%" } }}>
+
             {/* Header and Search on same line */}
             <Box
               display="flex"

@@ -158,7 +158,7 @@ export const ArendatoriEditPage: React.FC = () => {
             <Box sx={{ maxWidth: { xs: '100%', sm: '90%', md: '80%' } }}>
                 <Paper sx={{ p: { xs: 1, sm: 1.5, md: 2 } }}>
                     <form onSubmit={handleSubmit}>
-                        <Typography variant="h6" sx={{ mb: 2, color: 'primary.main' }}>
+                        <Typography variant="h6" sx={{ mb: 2, color: 'primary.main',fontSize: { xs: "1.5rem", sm: "2rem" }, }}>
                             Informații Arendator
                         </Typography>
 
